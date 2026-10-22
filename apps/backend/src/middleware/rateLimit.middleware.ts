@@ -1,5 +1,11 @@
 import rateLimit from 'express-rate-limit';
 
+// Rate limiting is a production/dev abuse guard. Under NODE_ENV=test
+// (the Playwright e2e job and Jest) it only causes false failures —
+// the e2e suite logs in ~15 times plus retries, blowing past the auth
+// cap — so every limiter is skipped in test.
+const SKIP = process.env.NODE_ENV === 'test';
+
 // General API rate limiter: 300 requests per 15 minutes per IP.
 // Generous headroom for SPAs that fan out several small requests per
 // page (autocomplete, polls, dropdowns), but still protective against
@@ -10,6 +16,7 @@ export const apiLimiter = rateLimit({
   max: 300,
   standardHeaders: true,
   legacyHeaders: false,
+  skip: () => SKIP,
   message: { error: 'Too many requests, please try again later.' },
 });
 
@@ -23,6 +30,7 @@ export const notificationsLimiter = rateLimit({
   max: 600,
   standardHeaders: true,
   legacyHeaders: false,
+  skip: () => SKIP,
   message: { error: 'Too many requests, please try again later.' },
 });
 
@@ -32,6 +40,7 @@ export const authLimiter = rateLimit({
   max: 20,
   standardHeaders: true,
   legacyHeaders: false,
+  skip: () => SKIP,
   message: { error: 'Too many authentication attempts, please try again later.' },
 });
 
@@ -41,5 +50,6 @@ export const aiLimiter = rateLimit({
   max: 30,
   standardHeaders: true,
   legacyHeaders: false,
+  skip: () => SKIP,
   message: { error: 'AI request limit reached, please try again later.' },
 });

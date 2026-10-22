@@ -30,7 +30,12 @@ test.describe('Issues map', () => {
     await expect(page.locator('#issues-map')).toBeVisible();
   });
 
-  test('P0-5 radius search exposes the slider and filters server-side', async ({ page }) => {
+  test('P0-5 radius search exposes the slider and filters server-side', async ({ page, context }) => {
+    // The radius search calls navigator.geolocation; without a granted
+    // permission + mock position the component aborts and the slider
+    // never renders.
+    await context.grantPermissions(['geolocation']);
+    await context.setGeolocation({ latitude: 40.7128, longitude: -74.006 });
     await page.goto('/ward/map');
     await expect(page.locator('#issues-map')).toBeVisible({ timeout: 10_000 });
     const radius = page.getByTestId('radius-toggle');

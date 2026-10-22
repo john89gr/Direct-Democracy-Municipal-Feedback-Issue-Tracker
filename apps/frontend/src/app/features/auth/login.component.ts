@@ -29,12 +29,12 @@ import { getErrorMessage, toApiError } from '../../core/errors/api-error';
 
         <form (ngSubmit)="onSubmit()">
           <div class="form-group">
-            <label>{{ i18n.t('auth.email') }}</label>
-            <input type="email" [(ngModel)]="email" name="email" [placeholder]="i18n.t('auth.email')" required />
+            <label for="login-email">{{ i18n.t('auth.email') }}</label>
+            <input id="login-email" type="email" [(ngModel)]="email" name="email" [placeholder]="i18n.t('auth.email')" required />
           </div>
           <div class="form-group">
-            <label>{{ i18n.t('auth.password') }}</label>
-            <input type="password" [(ngModel)]="password" name="password" [placeholder]="i18n.t('auth.password')" required />
+            <label for="login-password">{{ i18n.t('auth.password') }}</label>
+            <input id="login-password" type="password" [(ngModel)]="password" name="password" [placeholder]="i18n.t('auth.password')" required />
             <div style="text-align:right;margin-top:6px;">
               <a routerLink="/forgot-password" style="font-size:12px;">{{ i18n.t('auth.forgotPassword') }}</a>
             </div>

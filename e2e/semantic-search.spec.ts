@@ -27,7 +27,10 @@ test.describe('Semantic search', () => {
 
   test('search bar accepts a query and returns results', async ({ page }) => {
     await page.goto('/issues');
-    const search = page.getByPlaceholder(/search issues/i);
+    // Two inputs match /search issues/i (the global header box is
+    // "Search issues, users..."); the semantic one is exactly
+    // "Search issues...".
+    const search = page.getByPlaceholder('Search issues...', { exact: true });
     await expect(search).toBeVisible();
     await search.fill('pothole');
     await search.press('Enter');

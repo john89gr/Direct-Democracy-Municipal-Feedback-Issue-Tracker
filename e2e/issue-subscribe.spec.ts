@@ -14,7 +14,8 @@ test.describe('Issue subscribe', () => {
 
   test('citizen can subscribe and unsubscribe from an issue', async ({ page }) => {
     await page.goto('/issues');
-    await page.locator('a[href^="/issues/"]').first().click();
+    // Issue rows navigate via [routerLink] on <tr>, not <a href>.
+    await page.locator('tbody tr').first().click();
     await page.waitForURL(/\/issues\/[a-f0-9-]+/, { timeout: 10_000 });
 
     const subscribeBtn = page.getByTestId('issue-subscribe-btn');

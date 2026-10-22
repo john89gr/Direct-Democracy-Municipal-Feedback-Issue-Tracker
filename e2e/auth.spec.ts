@@ -56,9 +56,9 @@ test.describe('Authentication', () => {
     await page.getByRole('button', { name: /sign in/i }).click();
     await page.waitForURL((u) => !u.pathname.includes('/login'), { timeout: 10_000 });
 
-    // The layout's logout button is wired to auth.logout(), which
-    // navigates back to /login.
-    await page.getByRole('button', { name: /log out|sign out/i }).first().click();
+    // The layout's logout button is a Material icon whose accessible
+    // name is the ligature text "logout".
+    await page.getByRole('button', { name: /logout|log out|sign out/i }).first().click();
     await page.waitForURL(/\/login/, { timeout: 10_000 });
   });
 });

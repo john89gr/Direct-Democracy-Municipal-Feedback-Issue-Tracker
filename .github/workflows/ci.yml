@@ -56,6 +56,12 @@ jobs:
         # valid types.
         run: npx prisma migrate deploy --schema=apps/backend/prisma/schema.prisma
 
+      - name: Seed the database
+        # Some Jest suites (issue creation, ward routing) exercise the
+        # smart-routing paths against departments/wards that only the
+        # seed creates.
+        run: npm run db:seed
+
       - name: Lint
         run: npm run lint
 

@@ -91,9 +91,9 @@ interface DuplicateMatch {
               </div>
             }
             <div class="form-group">
-              <label>{{ 'issues.titleField' | t }}</label>
+              <label for="issue-title">{{ 'issues.titleField' | t }}</label>
               <div style="display:flex;gap:8px;align-items:center;">
-                <input type="text" [(ngModel)]="title" (ngModelChange)="clearFieldError('title')" name="title" required [placeholder]="i18n.t('issues.briefSummary')" [class.input-error]="!!getFieldError('title')" style="flex:1;" />
+                <input id="issue-title" type="text" [(ngModel)]="title" (ngModelChange)="clearFieldError('title')" name="title" required [placeholder]="i18n.t('issues.briefSummary')" [class.input-error]="!!getFieldError('title')" style="flex:1;" />
                 <button type="button" class="btn btn-secondary btn-sm" (click)="generateDescription()" [disabled]="!title.trim() || descLoading" [title]="i18n.t('issues.autoDescribe')">
                   @if (descLoading) { {{ 'issues.writing' | t }} } @else { {{ 'issues.autoDescribe' | t }} }
                 </button>
@@ -101,8 +101,9 @@ interface DuplicateMatch {
               @if (getFieldError('title')) { <div class="field-error">⚠ {{ getFieldError('title') }}</div> }
             </div>
             <div class="form-group">
-              <label>{{ 'issues.description' | t }}</label>
+              <label for="issue-description">{{ 'issues.description' | t }}</label>
               <textarea
+                id="issue-description"
                 [ngModel]="description"
                 (ngModelChange)="onDescriptionChange($event)"
                 name="description"
@@ -143,8 +144,8 @@ interface DuplicateMatch {
               @if (getFieldError('category')) { <div class="field-error">⚠ {{ getFieldError('category') }}</div> }
             </div>
             <div class="form-group">
-              <label>{{ 'issues.location' | t }}</label>
-              <input type="text" [(ngModel)]="location" (ngModelChange)="clearFieldError('location')" name="location" required [placeholder]="i18n.t('issues.streetPlaceholder')" [class.input-error]="!!getFieldError('location')" />
+              <label for="issue-location">{{ 'issues.location' | t }}</label>
+              <input id="issue-location" type="text" [(ngModel)]="location" (ngModelChange)="clearFieldError('location')" name="location" required [placeholder]="i18n.t('issues.streetPlaceholder')" [class.input-error]="!!getFieldError('location')" />
               @if (getFieldError('location')) { <div class="field-error">⚠ {{ getFieldError('location') }}</div> }
             </div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
