@@ -48,7 +48,12 @@ jobs:
           cp public/index.html public/404.html
           touch public/.nojekyll
 
+      # enablement: true lets this workflow create the Pages site with
+      # "GitHub Actions" as its build source on first run, so no manual
+      # Settings → Pages step is needed.
       - uses: actions/configure-pages@v5
+        with:
+          enablement: true
 
       - uses: actions/upload-pages-artifact@v3
         with:
