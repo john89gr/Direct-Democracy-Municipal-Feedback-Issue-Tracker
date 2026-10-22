@@ -9,6 +9,7 @@ import { TranslationService } from '../../core/i18n/translation.service';
 import { Issue, Ward } from '@dd/shared-types';
 import { statusColors } from '../../core/utils/issue-map';
 import * as L from 'leaflet';
+import './leaflet-global';
 import 'leaflet.heat';
 
 interface AreaSummaryIssue {

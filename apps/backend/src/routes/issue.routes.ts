@@ -7,6 +7,7 @@ import { areaSummaryService } from '../services/area-summary.service';
 import { clusterReportService } from '../services/cluster-report.service';
 import { createIssueSchema, updateStatusSchema, updateIssueSchema } from '../validators/issue.validators';
 import { getEmbedIssueQueue } from '../queue/embed-issue.queue';
+import { config } from '../config';
 import { sendDomainError } from '../errors/domain-errors';
 import { parsePagination } from '../utils/pagination';
 import { prisma } from '../db/client';
@@ -255,29 +256,37 @@ router.post('/', authenticate, async (req: AuthenticatedRequest, res) => {
       console.warn(`[issues.create] Real-time map push broadcast failed: ${broadcastErr.message}`);
     }
 
-    // Fire-and-forget enqueue. If Redis is unreachable, the issue is
-    // still created — the backfill script (`npm run embed:backfill`)
-    // will catch up. We log a warning and surface a `warnings` array in
-    // the 202 response so the client / mayor dashboard can show a
-    // degraded state instead of silently dropping the embedding job.
+    // Fire-and-forget enqueue. If Redis is disabled (REDIS_ENABLED=false)
+    // or unreachable, the issue is still created — the backfill script
+    // (`npm run embed:backfill`) will catch up. We must NOT await
+    // `queue.add` with Redis off: BullMQ's required
+    // `maxRetriesPerRequest: null` makes the command retry forever
+    // instead of rejecting, hanging the request. We log a warning and
+    // surface a `warnings` array in the 202 response so the client /
+    // mayor dashboard can show a degraded state instead of silently
+    // dropping the embedding job.
     const warnings: string[] = [];
-    try {
-      const queue = getEmbedIssueQueue();
-      await queue.add(
-        'embed',
-        { issueId: issue.id },
-        {
-          // dedupe: BullMQ will skip a duplicate add with the same
-          // jobId. Protects against double-clicks on the submit button.
-          jobId: `embed:${issue.id}`,
-        },
-      );
-    } catch (queueErr: any) {
-      console.warn(
-        `[issue.create] Could not enqueue embed job for ${issue.id}: ${queueErr.message}. ` +
-        `The backfill script will catch up.`,
-      );
-      warnings.push('embedding_deferred_failed');
+    if (!config.redis.enabled) {
+      warnings.push('embedding_deferred_disabled');
+    } else {
+      try {
+        const queue = getEmbedIssueQueue();
+        await queue.add(
+          'embed',
+          { issueId: issue.id },
+          {
+            // dedupe: BullMQ will skip a duplicate add with the same
+            // jobId. Protects against double-clicks on the submit button.
+            jobId: `embed:${issue.id}`,
+          },
+        );
+      } catch (queueErr: any) {
+        console.warn(
+          `[issue.create] Could not enqueue embed job for ${issue.id}: ${queueErr.message}. ` +
+          `The backfill script will catch up.`,
+        );
+        warnings.push('embedding_deferred_failed');
+      }
     }
 
     res.status(202).json({

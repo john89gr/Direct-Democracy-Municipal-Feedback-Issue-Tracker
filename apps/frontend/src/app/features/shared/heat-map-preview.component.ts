@@ -5,6 +5,7 @@ import { TranslationService } from '../../core/i18n/translation.service';
 import { ApiService } from '../../core/services/api.service';
 import { Issue } from '@dd/shared-types';
 import * as L from 'leaflet';
+import './leaflet-global';
 import 'leaflet.heat';
 
 /**
