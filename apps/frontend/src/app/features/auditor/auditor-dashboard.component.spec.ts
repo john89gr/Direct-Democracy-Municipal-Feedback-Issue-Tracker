@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA, computed } from '@angular/core';
+import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 import { AuditorDashboardComponent } from './auditor-dashboard.component';
 import { ApiService } from '../../core/services/api.service';
@@ -61,6 +62,8 @@ describe('AuditorDashboardComponent (P2-20 auditor parity)', () => {
     TestBed.configureTestingModule({
       imports: [AuditorDashboardComponent],
       providers: [
+        // The template uses routerLink; RouterLink injects ActivatedRoute.
+        provideRouter([]),
         { provide: ApiService, useValue: apiSpy },
         {
           provide: AuthService,

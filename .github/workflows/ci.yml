@@ -8,24 +8,14 @@ on:
 
 jobs:
   test:
-    # Backend unit tests (Jest). Uses a single postgres service —
-    # backend tests run with REDIS_ENABLED=false so no Redis needed.
+    # Backend unit tests (Jest). The schema uses PostGIS + pgvector
+    # columns, so the vanilla postgres images fail `prisma db push`
+    # with `type "geometry" does not exist` — we build the repo's own
+    # docker/postgres.Dockerfile (pgvector + postgis) as a step
+    # instead of a service container (services can only pull remote
+    # images). Backend tests run with REDIS_ENABLED=false so no
+    # Redis needed.
     runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres:16-alpine
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: direct_democracy
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U postgres -d direct_democracy"
-          --health-interval 5s
-          --health-timeout 5s
-          --health-retries 10
 
     env:
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/direct_democracy
@@ -36,6 +26,17 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Start Postgres (pgvector + PostGIS)
+        run: |
+          docker build -t dd-postgres -f docker/postgres.Dockerfile .
+          docker run -d --name dd-postgres -p 5432:5432 \
+            -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=direct_democracy \
+            dd-postgres
+          for i in $(seq 1 30); do
+            docker exec dd-postgres pg_isready -U postgres -d direct_democracy && break
+            sleep 2
+          done
 
       - uses: actions/setup-node@v4
         with:
@@ -48,15 +49,12 @@ jobs:
       - name: Generate Prisma client
         run: npm run generate --workspace=apps/backend
 
-      - name: Push database schema
-        # `prisma db push` syncs the Prisma schema directly without
-        # running SQL migration files. The `Unsupported("vector(768)")`
-        # and `Unsupported("geometry(Point, 4326)")` columns are passed
-        # through as raw types — Prisma doesn't verify the pgvector /
-        # PostGIS extensions are installed, so the vanilla
-        # postgres:16-alpine image is sufficient for the typed-client
-        # tests in this job.
-        run: npx prisma db push --schema=apps/backend/prisma/schema.prisma
+      - name: Apply database migrations
+        # `migrate deploy` (not `db push`) — the first migration
+        # contains the `CREATE EXTENSION vector/postgis` calls, so
+        # the Unsupported("vector(768)") and geometry columns become
+        # valid types.
+        run: npx prisma migrate deploy --schema=apps/backend/prisma/schema.prisma
 
       - name: Lint
         run: npm run lint
@@ -112,16 +110,9 @@ jobs:
     #     lifecycle is more reliable than racing a background
     #     `nohup npm run dev &` in a CI step.
     #
-    # Known followup: the vanilla `postgres:16-alpine` image has
-    # neither pgvector nor PostGIS. The schema is pushed (Prisma's
-    # `Unsupported(...)` columns become raw types) but the
-    # extensions are not created, so any spec that hits
-    # `/api/v1/issues/search-similar` or `/api/v1/spatial/*` will
-    # fail with `type "vector" does not exist`. Fixing this requires
-    # either (a) building & pushing a custom image with both
-    # extensions, or (b) switching the service to
-    # `pgvector/pgvector:pg16` + an init step that installs
-    # postgis-3 via apt. Tracked separately.
+    # Postgres runs as a `docker run` step built from
+    # docker/postgres.Dockerfile (pgvector + PostGIS) — the semantic
+    # search and spatial specs need the real extensions.
     runs-on: ubuntu-latest
 
     # Fail fast on a real hang. Default is 360 minutes — way too
@@ -130,20 +121,6 @@ jobs:
     timeout-minutes: 30
 
     services:
-      postgres:
-        image: postgres:16-alpine
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: direct_democracy
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U postgres -d direct_democracy"
-          --health-interval 5s
-          --health-timeout 5s
-          --health-retries 10
-
       redis:
         # BullMQ (embed-issue queue) and the semantic-search cache
         # both need a live Redis. The vanilla `redis:7-alpine` image
@@ -169,6 +146,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Start Postgres (pgvector + PostGIS)
+        run: |
+          docker build -t dd-postgres -f docker/postgres.Dockerfile .
+          docker run -d --name dd-postgres -p 5432:5432 \
+            -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=direct_democracy \
+            dd-postgres
+          for i in $(seq 1 30); do
+            docker exec dd-postgres pg_isready -U postgres -d direct_democracy && break
+            sleep 2
+          done
+
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
@@ -180,18 +168,11 @@ jobs:
       - name: Generate Prisma client
         run: npm run generate --workspace=apps/backend
 
-      - name: Reset + push database schema
-        # `--force-reset` drops the database before pushing, which
-        # gives us a guaranteed-empty schema for the seed step.
-        # Without this, the seed (which uses `prisma.create` for
-        # the demo users / issues / departments) hits unique-
-        # constraint errors on a re-run with stale data. `db push`
-        # bypasses the SQL migration files (which require pgvector
-        # + PostGIS extensions the vanilla image doesn't ship) and
-        # uses the Prisma schema directly; the `Unsupported(...)`
-        # columns are pushed as raw types without verifying the
-        # extensions.
-        run: npx prisma db push --force-reset --schema=apps/backend/prisma/schema.prisma
+      - name: Apply database migrations
+        # Fresh runner + fresh volume means an empty DB; `migrate
+        # deploy` creates the extensions, tables, and indexes exactly
+        # like the local setup in the README.
+        run: npx prisma migrate deploy --schema=apps/backend/prisma/schema.prisma
 
       - name: Seed the database
         # The `--force-reset` above guarantees an empty DB, so the
