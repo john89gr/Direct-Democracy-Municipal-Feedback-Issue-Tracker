@@ -31,7 +31,8 @@ A full-stack civic engagement platform enabling citizens to report issues, vote 
 
 ## 📋 Table of Contents
 
-- [What’s New](#-whats-new)
+- [Screenshots](#-screenshots)
+- [What's New](#-whats-new)
 - [Tech Stack](#-tech-stack)
 - [Architecture](#-architecture)
 - [Roles & Features](#-roles--features)
@@ -51,6 +52,81 @@ A full-stack civic engagement platform enabling citizens to report issues, vote 
 - [Project Structure](#-project-structure)
 - [Health Check](#-health-check)
 - [License](#-license)
+
+---
+
+## 📸 Screenshots
+
+Real captures from the running app (seeded demo data). Reproduce them with `node scripts/capture-screenshots.js` while the dev stack is up.
+
+### 🖥️ Desktop (1440 × 900)
+
+| | |
+|---|---|
+| **Login** — glassmorphic auth with one-click demo accounts | **Public Transparency Portal** — no-auth open data view |
+| ![Login](docs/screenshots/01-login.png) | ![Portal](docs/screenshots/02-transparency-portal.png) |
+| **Citizen Dashboard** — stats, activity feed, civic score, polls, AI chatbot | **Report an Issue** — offline-aware submission form |
+| ![Citizen dashboard](docs/screenshots/03-citizen-dashboard.png) | ![Report issue](docs/screenshots/04-report-issue.png) |
+| **Issues Map** — Leaflet map with ward boundaries, heat layer, radius search & draw-area | **Super Admin Dashboard** — analytics, system health, department performance |
+| ![Map](docs/screenshots/05-issue-map.png) | ![Admin dashboard](docs/screenshots/06-admin-dashboard.png) |
+| **Issue Tracker** — filterable list with bulk actions, escalation queue, export | **Issue Detail** — status timeline, assignment, AI analysis & share links |
+| ![Issue tracker](docs/screenshots/07-issue-tracker.png) | ![Issue detail](docs/screenshots/08-issue-detail.png) |
+| **Legislation KB** — upload / browse ordinances with RAG citations | **Mayor Dashboard** — city-wide analytics and weekly briefing |
+| ![Legislation KB](docs/screenshots/09-legislation-kb.png) | ![Mayor dashboard](docs/screenshots/10-mayor-dashboard.png) |
+| **Department Head Dashboard** — department issues, staff, budget | **Council Dashboard** — constituent issues, resolution voting, meetings |
+| ![Department dashboard](docs/screenshots/11-department-dashboard.png) | ![Council dashboard](docs/screenshots/12-council-dashboard.png) |
+| **Staff Dashboard** — assigned task queue, field notes, status actions | **Ward Rep Dashboard** — neighborhood feedback and ward map |
+| ![Staff dashboard](docs/screenshots/13-staff-dashboard.png) | ![Ward dashboard](docs/screenshots/14-ward-dashboard.png) |
+| **Volunteer Dashboard** — community projects and events | **Auditor Dashboard** — compliance oversight and anomaly view |
+| ![Volunteer dashboard](docs/screenshots/15-volunteer-dashboard.png) | ![Auditor dashboard](docs/screenshots/16-auditor-dashboard.png) |
+| **Media Dashboard** — public statistics and trending issues | **Analytics** — charts, resolution trends, CSV/PDF report exports |
+| ![Media dashboard](docs/screenshots/17-media-dashboard.png) | ![Analytics](docs/screenshots/18-analytics.png) |
+| **Polls & Voting** — community polls with live results | **Forums** — ward-level discussion threads |
+| ![Polls](docs/screenshots/19-polls.png) | ![Forums](docs/screenshots/20-forums.png) |
+| **Events** — community calendar with RSVP | **Audit Logs** — immutable trail with filterable entries |
+| ![Events](docs/screenshots/21-events.png) | ![Audit logs](docs/screenshots/22-audit-logs.png) |
+
+### 📱 Mobile (390 × 844)
+
+The app is fully responsive — collapsible hamburger sidebar, stacked cards and touch-friendly controls below 1024px.
+
+<table>
+  <tr>
+    <td align="center"><b>Login</b><br/><img src="docs/screenshots/mobile/01-login.png" width="200" alt="Login (mobile)"/></td>
+    <td align="center"><b>Transparency Portal</b><br/><img src="docs/screenshots/mobile/02-transparency-portal.png" width="200" alt="Portal (mobile)"/></td>
+    <td align="center"><b>Citizen Dashboard</b><br/><img src="docs/screenshots/mobile/03-citizen-dashboard.png" width="200" alt="Citizen dashboard (mobile)"/></td>
+    <td align="center"><b>Report an Issue</b><br/><img src="docs/screenshots/mobile/04-report-issue.png" width="200" alt="Report issue (mobile)"/></td>
+    <td align="center"><b>Issues Map</b><br/><img src="docs/screenshots/mobile/05-issue-map.png" width="200" alt="Map (mobile)"/></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Admin Dashboard</b><br/><img src="docs/screenshots/mobile/06-admin-dashboard.png" width="200" alt="Admin dashboard (mobile)"/></td>
+    <td align="center"><b>Issue Tracker</b><br/><img src="docs/screenshots/mobile/07-issue-tracker.png" width="200" alt="Issue tracker (mobile)"/></td>
+    <td align="center"><b>Issue Detail</b><br/><img src="docs/screenshots/mobile/08-issue-detail.png" width="200" alt="Issue detail (mobile)"/></td>
+    <td align="center"><b>Legislation KB</b><br/><img src="docs/screenshots/mobile/09-legislation-kb.png" width="200" alt="Legislation KB (mobile)"/></td>
+    <td align="center"><b>Mayor Dashboard</b><br/><img src="docs/screenshots/mobile/10-mayor-dashboard.png" width="200" alt="Mayor dashboard (mobile)"/></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Department Dashboard</b><br/><img src="docs/screenshots/mobile/11-department-dashboard.png" width="200" alt="Department dashboard (mobile)"/></td>
+    <td align="center"><b>Council Dashboard</b><br/><img src="docs/screenshots/mobile/12-council-dashboard.png" width="200" alt="Council dashboard (mobile)"/></td>
+    <td align="center"><b>Staff Dashboard</b><br/><img src="docs/screenshots/mobile/13-staff-dashboard.png" width="200" alt="Staff dashboard (mobile)"/></td>
+    <td align="center"><b>Ward Dashboard</b><br/><img src="docs/screenshots/mobile/14-ward-dashboard.png" width="200" alt="Ward dashboard (mobile)"/></td>
+    <td align="center"><b>Volunteer Dashboard</b><br/><img src="docs/screenshots/mobile/15-volunteer-dashboard.png" width="200" alt="Volunteer dashboard (mobile)"/></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Auditor Dashboard</b><br/><img src="docs/screenshots/mobile/16-auditor-dashboard.png" width="200" alt="Auditor dashboard (mobile)"/></td>
+    <td align="center"><b>Media Dashboard</b><br/><img src="docs/screenshots/mobile/17-media-dashboard.png" width="200" alt="Media dashboard (mobile)"/></td>
+    <td align="center"><b>Analytics</b><br/><img src="docs/screenshots/mobile/18-analytics.png" width="200" alt="Analytics (mobile)"/></td>
+    <td align="center"><b>Polls &amp; Voting</b><br/><img src="docs/screenshots/mobile/19-polls.png" width="200" alt="Polls (mobile)"/></td>
+    <td align="center"><b>Forums</b><br/><img src="docs/screenshots/mobile/20-forums.png" width="200" alt="Forums (mobile)"/></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Events</b><br/><img src="docs/screenshots/mobile/21-events.png" width="200" alt="Events (mobile)"/></td>
+    <td align="center"><b>Audit Logs</b><br/><img src="docs/screenshots/mobile/22-audit-logs.png" width="200" alt="Audit logs (mobile)"/></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+</table>
 
 ---
 
@@ -1020,6 +1096,9 @@ Direct-Democracy-Municipal-Feedback-Issue-Tracker/
 │
 ├── packages/
 │   └── shared-types/                            # TS interfaces shared between FE & BE
+│
+├── docs/
+│   └── screenshots/                             # Desktop screenshots (+ mobile/ subfolder)
 │
 ├── docker/
 │   ├── docker-compose.yml                       # Postgres + Redis + backend + worker
